@@ -24,7 +24,7 @@ Toolkit.run(async tools => {
   }
 
   // tools.log('context', tools.context)
-  templates.forEach(async templateInfo => {
+  await templates.forEach(async templateInfo => {
     let template = templateInfo.template;
     let assignees = templateInfo.assignees.push(tools.context.payload.sender.login)
     // Get the file
@@ -45,7 +45,7 @@ Toolkit.run(async tools => {
 
     // Create the new issue
     try {
-      
+      console.log("assignees", assignees)
       let issue = await tools.github.issues.create({
         ...tools.context.repo,
         ...templated,
