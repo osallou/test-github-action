@@ -8,18 +8,6 @@ function listToArray (list) {
   return Array.isArray(list) ? list : list.split(', ')
 }
 
-async function createIssue(tools, templated, assignees, attributes) {
-  let issue = await tools.github.issues.create({
-    ...tools.context.repo,
-    ...templated,
-    assignees: assignees,
-    labels: listToArray(attributes.labels)
-  })
-  console.log("issue", issue)
-  return issue
-}
-
-
 Toolkit.run(async tools => {
   // const template = tools.arguments._[0] || '.github/ISSUE_TEMPLATE.md'
   const configText = tools.getFile(tools.arguments._[0] || ".github/issues.json")
@@ -36,7 +24,7 @@ Toolkit.run(async tools => {
   }
 
   // tools.log('context', tools.context)
-  templates.forEach(templateInfo => {
+  templates.forEach(async templateInfo => {
     let template = templateInfo.template;
     let assignees = templateInfo.assignees.push(tools.context.payload.sender.login)
     // Get the file
@@ -57,14 +45,13 @@ Toolkit.run(async tools => {
 
     // Create the new issue
     try {
-      /*
+      
       let issue = await tools.github.issues.create({
         ...tools.context.repo,
         ...templated,
         assignees: assignees,
         labels: listToArray(attributes.labels)
-      })*/
-      let issue = createIssue(tools, templated, assignees, attributes)
+      })
       tools.log.success(`Created issue ${issue.data.title}#${issue.data.number}: ${issue.data.html_url}`)
     } catch (err) {
       // Log the error message
