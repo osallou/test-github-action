@@ -34,7 +34,7 @@ Toolkit.run(async tools => {
   tools.log('context', tools.context)
   templates.forEach(templateInfo => {
     let template = templateInfo.template;
-    let assignees = templateInfo.assignees.push(tools.context.sender.login)
+    let assignees = templateInfo.assignees.push(tools.context.payload.sender.login)
     // Get the file
     tools.log.debug('Reading from file', template)
     const file = tools.getFile(template)
