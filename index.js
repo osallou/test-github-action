@@ -8,11 +8,23 @@ function listToArray (list) {
   return Array.isArray(list) ? list : list.split(', ')
 }
 
+async function createIssue(tools, templated, assignees, attributes) {
+  let issue = await tools.github.issues.create({
+    ...tools.context.repo,
+    ...templated,
+    assignees: assignees,
+    labels: listToArray(attributes.labels)
+  })
+  return issue
+}
+
+
 Toolkit.run(async tools => {
   // const template = tools.arguments._[0] || '.github/ISSUE_TEMPLATE.md'
   const templates = [{template: 'ISSUE1.md', assignees: []}, {template: 'ISSUE2.md', assignees: ['osallou']}]
   const env = nunjucks.configure({ autoescape: false })
   env.addFilter('date', dateFilter)
+  let isError = false
 
   const templateVariables = {
     ...tools.context,
@@ -39,16 +51,16 @@ Toolkit.run(async tools => {
     tools.log.debug('Templates compiled', templated)
     tools.log.info(`Creating new issue ${templated.title}`)
 
-    let isError = false
-
     // Create the new issue
     try {
-      const issue = await tools.github.issues.create({
+      /*
+      let issue = await tools.github.issues.create({
         ...tools.context.repo,
         ...templated,
         assignees: assignees,
         labels: listToArray(attributes.labels)
-      })
+      })*/
+      let issue = createIssue(tools, templated, assignees, attributes)
 
       tools.log.success(`Created issue ${issue.data.title}#${issue.data.number}: ${issue.data.html_url}`)
     } catch (err) {
