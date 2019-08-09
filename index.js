@@ -34,19 +34,19 @@ Toolkit.run(async tools => {
     date: Date.now()
   }
 
-  tools.log('context', tools.context)
+  // tools.log('context', tools.context)
   templates.forEach(templateInfo => {
     let template = templateInfo.template;
     let assignees = templateInfo.assignees.push(tools.context.payload.sender.login)
     // Get the file
     tools.log.debug('Reading from file', template)
-    const file = tools.getFile(template)
+    let file = tools.getFile(template)
 
     // Grab the front matter as JSON
-    const { attributes, body } = fm(file)
+    let { attributes, body } = fm(file)
     tools.log(`Front matter for ${template} is`, attributes)
 
-    const templated = {
+    let templated = {
       body: env.renderString(body, templateVariables),
       title: env.renderString(attributes.title, templateVariables)
     }
