@@ -28,10 +28,8 @@ Toolkit.run(async tools => {
   // tools.log('context', tools.context)
   for(let i=0; i <templates.length;i++) {
     let templateInfo = templates[i];
-  //await templates.forEach(async templateInfo => {
     let template = templateInfo.template;
-    console.log("inputs", templateInfo.assignees, tools.context.payload.sender.login)
-    let assignees = templateInfo.assignees.push(tools.context.payload.sender.login)
+    templateInfo.assignees.push(tools.context.payload.sender.login)
     // Get the file
     tools.log.debug('Reading from file', template)
     let file = tools.getFile(template)
@@ -50,11 +48,10 @@ Toolkit.run(async tools => {
 
     // Create the new issue
     try {
-      console.log("assignees", assignees)
       let issue = await tools.github.issues.create({
         ...tools.context.repo,
         ...templated,
-        assignees: assignees,
+        assignees: templateInfo.assignees,
         labels: listToArray(attributes.labels)
       })
       tools.log.success(`Created issue ${issue.data.title}#${issue.data.number}: ${issue.data.html_url}`)
@@ -69,7 +66,6 @@ Toolkit.run(async tools => {
       // Exit with a failing status
       isError = true
     }
-  //});
   }
   if (isError) {
     tools.exit.failure()
