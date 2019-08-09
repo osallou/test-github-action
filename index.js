@@ -8,7 +8,10 @@ function listToArray (list) {
   return Array.isArray(list) ? list : list.split(', ')
 }
 
+
+
 Toolkit.run(async tools => {
+  let isError = false
   // const template = tools.arguments._[0] || '.github/ISSUE_TEMPLATE.md'
   const configText = tools.getFile(tools.arguments._[0] || ".github/issues.json")
   const config = JSON.parse(configText)
@@ -16,7 +19,6 @@ Toolkit.run(async tools => {
   // const templates = [{template: 'ISSUE1.md', assignees: []}, {template: 'ISSUE2.md', assignees: ['osallou']}]
   const env = nunjucks.configure({ autoescape: false })
   env.addFilter('date', dateFilter)
-  let isError = false
 
   const templateVariables = {
     ...tools.context,
@@ -24,8 +26,11 @@ Toolkit.run(async tools => {
   }
 
   // tools.log('context', tools.context)
-  await templates.forEach(async templateInfo => {
+  for(let i=0; i <templates.length;i++) {
+    let templateInfo = templates[i];
+  //await templates.forEach(async templateInfo => {
     let template = templateInfo.template;
+    console.log("inputs", templateInfo.assignees, tools.context.payload.sender.login)
     let assignees = templateInfo.assignees.push(tools.context.payload.sender.login)
     // Get the file
     tools.log.debug('Reading from file', template)
@@ -64,7 +69,8 @@ Toolkit.run(async tools => {
       // Exit with a failing status
       isError = true
     }
-  });
+  //});
+  }
   if (isError) {
     tools.exit.failure()
   }
