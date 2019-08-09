@@ -15,6 +15,7 @@ async function createIssue(tools, templated, assignees, attributes) {
     assignees: assignees,
     labels: listToArray(attributes.labels)
   })
+  console.log("issue", issue)
   return issue
 }
 
@@ -64,7 +65,6 @@ Toolkit.run(async tools => {
         labels: listToArray(attributes.labels)
       })*/
       let issue = createIssue(tools, templated, assignees, attributes)
-
       tools.log.success(`Created issue ${issue.data.title}#${issue.data.number}: ${issue.data.html_url}`)
     } catch (err) {
       // Log the error message
