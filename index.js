@@ -21,8 +21,9 @@ async function createIssue(tools, templated, assignees, attributes) {
 
 Toolkit.run(async tools => {
   // const template = tools.arguments._[0] || '.github/ISSUE_TEMPLATE.md'
-  const config = tools.getFile(tools.arguments._[0] || ".github/issues.json")
-  const templates = JSON.parse(config)
+  const configText = tools.getFile(tools.arguments._[0] || ".github/issues.json")
+  const config = JSON.parse(configText)
+  const templates = config.templates
   // const templates = [{template: 'ISSUE1.md', assignees: []}, {template: 'ISSUE2.md', assignees: ['osallou']}]
   const env = nunjucks.configure({ autoescape: false })
   env.addFilter('date', dateFilter)
